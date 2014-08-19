@@ -23,16 +23,16 @@ function clientdash_woocommerce() {
 	if ( class_exists( 'ClientDash' ) && is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 
 		/**
-		 * Class ClientDash_WooCommerce
+		 * Class CD_WC
 		 *
 		 * The main plugin class. Does very awesome things.
 		 *
-		 * @package WordPress
+		 * @package Client Dash
 		 * @subpackage Client Dash WooCommerce
 		 *
 		 * @since Client Dash WooCommerce 0.1
 		 */
-		class ClientDash_WooCommerce extends ClientDash {
+		class CD_WC extends ClientDash {
 
 			/**
 			 * Client Dash WooCommerce version.
@@ -47,6 +47,13 @@ function clientdash_woocommerce() {
 			 * @since Client Dash WooCommerce 0.1
 			 */
 			public $path;
+
+			/**
+			 * The path to WooCommerce.
+			 *
+			 * @since Client Dash WooCommerce 0.1
+			 */
+			public $woocommerce_path;
 
 			/**
 			 * The url to our plugin directory.
@@ -105,6 +112,9 @@ function clientdash_woocommerce() {
 
 				// Establish the plugin root path
 				$this->path = plugin_dir_path( __FILE__ );
+
+				// Establish path the WooCommerce root
+				$this->woocommerce_path = WP_PLUGIN_DIR . '/woocommerce/';
 
 				// Establish the plugin directory url
 				$this->url = plugins_url( null, __FILE__ );
@@ -235,98 +245,8 @@ function clientdash_woocommerce() {
 						$products['counts']['featured'] ++;
 					}
 				}
-				?>
-				<h3>Total Products</h3>
-				<p class="cd-wc-product-count">
-					<a href="<?php admin_url(); ?>/edit.php?post_type=product">
-						<?php echo $products['counts']['total']; ?>
-					</a>
-				</p>
 
-				<h3>Categories</h3>
-				<?php if ( ! empty( $products['categories'] ) ) : ?>
-
-					<ul class="cd-wc-categories">
-						<?php foreach ( $products['categories'] as $category_ID => $category ) : ?>
-							<?php $cat_term = get_term( $category_ID, 'product_cat' ); ?>
-
-							<li class="cd-wc-category">
-								<div class="cd-wc-category-container<?php echo $this->admin ? ' cd-wc-hover' : ''; ?>">
-
-									<?php
-									if ( $this->admin ) {
-										echo '<a href="' . get_admin_url() . "edit.php?s&post_type=product&product_cat=$cat_term->slug\">";
-									}
-									?>
-
-									<h4 class="cd-wc-category-title">
-										<?php echo $cat_term->name; ?>
-
-									</h4>
-
-									<p class="cd-wc-category-count">
-										<?php echo count( $category ); ?>
-									</p>
-
-									<span>products</span>
-
-									<?php
-									if ( $this->admin ) {
-										echo '</a>';
-									}
-									?>
-								</div>
-
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				<?php else: ?>
-					No product categories.
-				<?php endif; ?>
-
-				<h3>Featured</h3>
-				<?php if ( ! empty( $products['featured'] ) ) : ?>
-
-					<ul class="cd-wc-featured-list">
-						<?php foreach ( $products['featured'] as $featured ) : ?>
-
-							<li class="cd-wc-featured">
-
-								<div class="cd-wc-featured-container<?php echo $this->admin ? ' cd-wc-hover' : ''; ?>">
-
-									<?php
-									if ( $this->admin ) {
-										echo '<a href="' . get_edit_post_link( $featured->ID ) . '">';
-									}
-									?>
-
-									<h4 class="cd-wc-featured-title">
-										<?php echo $featured->post_title; ?>
-									</h4>
-
-									<?php if ( has_post_thumbnail( $featured->ID ) ) : ?>
-										<p class="cd-wc-featured-thumb">
-											<?php echo get_the_post_thumbnail( $featured->ID, 'medium' ); ?>
-										</p>
-									<?php endif; ?>
-
-									<span class="dashicons dashicons-star-filled"></span>
-
-									<?php
-									if ( $this->admin ) {
-										echo '</a>';
-									}
-									?>
-
-								</div>
-
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				<?php else: ?>
-					No featured products.
-				<?php endif; ?>
-			<?php
+				include_once( $this->path . 'inc/views/view-products-overview.php' );
 			}
 
 			/**
@@ -336,12 +256,19 @@ function clientdash_woocommerce() {
 			 */
 			public function orders_overview() {
 
-				echo 'aoeifhae';
+				// Needed for report retrieval
+				include_once( $this->path . 'inc/class-cd-wc-getreports.php' );
+
+				// Instantiate the class
+				$reports = new CD_WC_GetReports();
+
+				include_once( $this->path . 'inc/views/view-orders-overview.php' );
 			}
 		}
 
 		// Instantiate the main plugin class
-		new ClientDash_WooCommerce();
+		global $CD_WC;
+		$CD_WC = new CD_WC();
 	} else {
 
 		// Notify the user to activate Client Dash first
