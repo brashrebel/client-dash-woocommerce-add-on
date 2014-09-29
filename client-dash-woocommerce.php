@@ -10,8 +10,7 @@ License: GPL2
 */
 
 /**
- * Our wrapper function to ensure the plugin only loads if Client Dash
- * is installed.
+ * Our wrapper function to ensure the plugin only loads if Client Dash is installed.
  *
  * @since Client Dash WooCommerce 0.1
  */
@@ -75,9 +74,10 @@ function clientdash_woocommerce() {
 			 * @since Client Dash WooCommerce 0.1
 			 */
 			public $option_defaults = array(
-				// Role visibility for every content section. This must be typed out
-				// EXACTLY accurately with ID's of pages, tabs, and content sections.
-				// 1 is hidden from each specific role, 0 is not hidden
+				/*
+				 * Role visibility for every content section. This must be typed out EXACTLY accurately with ID's of
+				 * pages, tabs, and content sections. 1 is hidden from each specific role, 0 is not hidden
+				 */
 				'content_sections_roles' => array(
 					'reports' => array(
 						'woocommerce' => array(

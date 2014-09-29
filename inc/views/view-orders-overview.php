@@ -1,7 +1,7 @@
 <h3>Total Sales</h3>
 <p class="cd-wc-product-count">
 	<a href="" onclick="return false">
-		$<?php echo $reports->total_sales; ?>
+		$<?php echo ! empty( $reports->total_sales ) ? $reports->total_sales : 0 ; ?>
 	</a>
 </p>
 
